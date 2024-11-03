@@ -1,0 +1,30 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '14.x'
+    displayName: 'Install Node.js'
+
+  - script: |
+      npm install
+      npm run build
+    displayName: 'Build frontend'
+
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: 'dist'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/frontend'
+    displayName: 'Copy frontend artifacts'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)/frontend'
+      artifactName: 'frontend'
+    displayName: 'Publish frontend artifacts'
