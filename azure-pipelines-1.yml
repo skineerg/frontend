@@ -1,0 +1,23 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '14.x'
+    displayName: 'Instalar Node.js'
+
+  - script: |
+      npm install
+      npm test -- --ci --reporters=default --reporters=jest-junit
+    displayName: 'Ejecutar pruebas unitarias con Jest'
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/jest-junit.xml'
+      testRunTitle: 'Resultados de pruebas unitarias'
